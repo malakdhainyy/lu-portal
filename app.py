@@ -5,12 +5,14 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics.pairwise import cosine_similarity
 import os
+import zipfile  # Added for zip handling
 
 APP_TITLE = "LU Researchers Explorer"
 
 @st.cache_data
 def load_profiles():
-    path = r"C:\Users\Admin\OneDrive\Desktop\LUscholar\profiless.csv"
+    # Changed to relative path
+    path = "profiless.csv"
     try:
         return pd.read_csv(path)
     except Exception as e:
@@ -19,7 +21,19 @@ def load_profiles():
 
 @st.cache_data
 def load_articles():
-    folder = r"C:\Users\Admin\OneDrive\Desktop\LUscholar\researcher_corpora"
+    folder = "researcher_corpora"
+    zip_path = "researcher_corpora.zip"  # Added zip path
+    
+    # Extract zip if folder doesn't exist
+    if not os.path.exists(folder):
+        if os.path.exists(zip_path):
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(".")
+            st.success("Extracted researcher corpora from zip file")
+        else:
+            st.error(f"Required data not found: {folder} folder and {zip_path} both missing")
+            return pd.DataFrame()
+    
     all_files = [os.path.join(folder, f) for f in os.listdir(folder) if f.endswith('.csv')]
     df_list = []
     for file in all_files:
@@ -30,7 +44,6 @@ def load_articles():
             st.warning(f"Error reading {file}: {e}")
     return pd.concat(df_list, ignore_index=True) if df_list else pd.DataFrame()
 
-@st.cache_data
 def compute_researcher_similarity(articles_df):
     """Compute cosine similarity between researchers based on publication topics"""
     if articles_df.empty or 'Classified_Topic' not in articles_df.columns:
