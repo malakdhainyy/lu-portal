@@ -1,7 +1,8 @@
 # LU Research Portal 📚
 
 The **LU Research Portal** is an interactive web-based dashboard built using [Streamlit](https://streamlit.io/). It provides powerful analytics and forecasting tools for analyzing research publications and researcher profiles scraped from Google Scholar.
-feel free ti click the link:https://lu-researcher-explorer.streamlit.app
+---
+feel free to click the link:https://lu-researcher-explorer.streamlit.app
 ---
 
 ## 🔍 Features
